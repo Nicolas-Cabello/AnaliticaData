@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "nombre": "Juan",
+    "edad": 25,
+    "salario": 3000,
+    "experiencia": 2,
+    "departamento": "Ventas"
+  },
+  {
+    "id": 2,
+    "nombre": "María",
+    "edad": 30,
+    "salario": 4000,
+    "experiencia": 5,
+    "departamento": "TI"
+  },
+  {
+    "id": 3,
+    "nombre": "Carlos",
+    "edad": 35,
+    "salario": 5000,
+    "experiencia": 8,
+    "departamento": "Ventas"
+  },
+  {
+    "id": 4,
+    "nombre": "Ana",
+    "edad": 28,
+    "salario": 3500,
+    "experiencia": 3,
+    "departamento": "TI"
+  },
+  {
+    "id": 5,
+    "nombre": "Luis",
+    "edad": 32,
+    "salario": 4500,
+    "experiencia": 6,
+    "departamento": "RRHH"
+  }
+]

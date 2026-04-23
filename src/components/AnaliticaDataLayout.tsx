@@ -5,11 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { Upload, MessageSquare, BarChart3, FileText, Send, Bot, User, LogOut } from 'lucide-react'
-import CSVUploader from './CSVUploader'
+import { Upload, MessageSquare, BarChart3, FileText, Send, Bot, User, LogOut, FileSpreadsheet, Code, TrendingUp } from 'lucide-react'
+import FileUploader from './FileUploader'
 import DataPreview from './DataPreview'
 import ChartVisualization from './ChartVisualization'
-import { useCSVParser } from '@/hooks/useCSVParser'
+import AutoCharts from './AutoCharts'
+import { useDataFileParser } from '@/hooks/useDataFileParser'
 import { useChatAI } from '@/hooks/useChatAI'
 import { useAuth } from '@/contexts/AuthContext'
 import './chat-scrollbar.css'
@@ -17,13 +18,13 @@ import './chat-scrollbar.css'
 export default function AnaliticaDataLayout() {
   const [activeSection, setActiveSection] = useState<'upload' | 'chat' | 'analysis'>('upload')
   const [inputMessage, setInputMessage] = useState('')
-  const { csvData, isProcessing, error, parseCSV, clearData, getSampleForAI } = useCSVParser()
+  const { dataFile, isProcessing, error, parseFile, clearData, getSampleForAI } = useDataFileParser()
   const { messages, isLoading, error: chatError, sendMessage, generateSummary, clearMessages } = useChatAI()
   const { user, logout } = useAuth()
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   const handleFileUpload = (file: File) => {
-    parseCSV(file)
+    parseFile(file)
     clearMessages()
     // Una vez procesado, cambiar a la sección de chat
     setTimeout(() => {
@@ -32,7 +33,7 @@ export default function AnaliticaDataLayout() {
   }
 
   const handleSendMessage = () => {
-    if (!inputMessage.trim() || !csvData) return
+    if (!inputMessage.trim() || !dataFile) return
 
     const dataSample = getSampleForAI()
     if (dataSample) {
@@ -42,7 +43,7 @@ export default function AnaliticaDataLayout() {
   }
 
   const handleGenerateSummary = () => {
-    if (!csvData) return
+    if (!dataFile) return
 
     const dataSample = getSampleForAI()
     if (dataSample) {
@@ -64,7 +65,7 @@ export default function AnaliticaDataLayout() {
     clearMessages()
   }
 
-  const hasData = csvData !== null
+  const hasData = dataFile !== null
 
   // Auto-scroll al último mensaje
   useEffect(() => {
@@ -84,9 +85,11 @@ export default function AnaliticaDataLayout() {
               <h1 className="text-2xl font-bold text-foreground">AnaliticaData</h1>
               {hasData && (
                 <div className="flex items-center space-x-2 ml-4">
-                  <FileText className="h-4 w-4 text-green-600" />
+                  {dataFile.fileType === 'csv' && <FileText className="h-4 w-4 text-green-600" />}
+                  {dataFile.fileType === 'json' && <Code className="h-4 w-4 text-blue-600" />}
+                  {dataFile.fileType === 'xlsx' && <FileSpreadsheet className="h-4 w-4 text-orange-600" />}
                   <span className="text-sm text-muted-foreground">
-                    {csvData.fileName} ({csvData.data.length} filas)
+                    {dataFile.fileName} ({dataFile.data.length} filas)
                   </span>
                 </div>
               )}
@@ -107,7 +110,7 @@ export default function AnaliticaDataLayout() {
                 }`}
               >
                 <Upload className="h-4 w-4" />
-                <span>Subir CSV</span>
+                <span>Subir Archivo</span>
               </button>
               <button
                 onClick={() => setActiveSection('chat')}
@@ -120,6 +123,18 @@ export default function AnaliticaDataLayout() {
               >
                 <MessageSquare className="h-4 w-4" />
                 <span>Chat</span>
+              </button>
+              <button
+                onClick={() => setActiveSection('analysis')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                  activeSection === 'analysis' 
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'text-muted-foreground hover:text-foreground'
+                } ${!hasData ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={!hasData}
+              >
+                <TrendingUp className="h-4 w-4" />
+                <span>Gráficos</span>
               </button>
               
               <Button
@@ -143,7 +158,7 @@ export default function AnaliticaDataLayout() {
           <div className="lg:col-span-2">
             {activeSection === 'upload' && (
               <div className="space-y-6">
-                <CSVUploader 
+                <FileUploader 
                   onFileUpload={handleFileUpload} 
                   isProcessing={isProcessing}
                 />
@@ -161,7 +176,7 @@ export default function AnaliticaDataLayout() {
                     <CardContent className="p-6">
                       <div className="flex items-center space-x-3">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                        <p className="text-sm text-muted-foreground">Procesando archivo CSV...</p>
+                        <p className="text-sm text-muted-foreground">Procesando archivo...</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -273,7 +288,7 @@ export default function AnaliticaDataLayout() {
                       value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      placeholder={hasData ? "Pregunta algo sobre tus datos..." : "Sube un archivo CSV primero"}
+                      placeholder={hasData ? "Pregunta algo sobre tus datos..." : "Sube un archivo primero"}
                       disabled={!hasData || isLoading}
                     />
                     <Button 
@@ -286,15 +301,24 @@ export default function AnaliticaDataLayout() {
                 </CardContent>
               </Card>
             )}
+
+            {activeSection === 'analysis' && (
+              <div className="space-y-6">
+                <AutoCharts 
+                  data={dataFile?.data || []} 
+                  fileName={dataFile?.fileName || 'archivo'}
+                />
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Data Preview */}
             <DataPreview 
-              data={csvData?.data || []}
-              columns={csvData?.columns || []}
-              fileName={csvData?.fileName}
+              data={dataFile?.data || []}
+              columns={dataFile?.columns || []}
+              fileName={dataFile?.fileName}
             />
 
             {/* Quick Actions */}

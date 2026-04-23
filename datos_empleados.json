@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "nombre": "Juan Pérez",
+    "edad": 28,
+    "departamento": "Ventas",
+    "salario": 45000,
+    "ciudad": "Madrid",
+    "fecha_contratacion": "2022-01-15",
+    "evaluacion_desempeno": 4.2
+  },
+  {
+    "id": 2,
+    "nombre": "María García",
+    "edad": 32,
+    "departamento": "Marketing",
+    "salario": 52000,
+    "ciudad": "Barcelona",
+    "fecha_contratacion": "2021-06-20",
+    "evaluacion_desempeno": 4.8
+  },
+  {
+    "id": 3,
+    "nombre": "Carlos Rodríguez",
+    "edad": 25,
+    "departamento": "Desarrollo",
+    "salario": 48000,
+    "ciudad": "Madrid",
+    "fecha_contratacion": "2023-03-10",
+    "evaluacion_desempeno": 4.5
+  },
+  {
+    "id": 4,
+    "nombre": "Ana Martínez",
+    "edad": 29,
+    "departamento": "Recursos Humanos",
+    "salario": 42000,
+    "ciudad": "Valencia",
+    "fecha_contratacion": "2022-09-05",
+    "evaluacion_desempeno": 4.6
+  },
+  {
+    "id": 5,
+    "nombre": "Luis Sánchez",
+    "edad": 35,
+    "departamento": "Ventas",
+    "salario": 55000,
+    "ciudad": "Sevilla",
+    "fecha_contratacion": "2020-11-12",
+    "evaluacion_desempeno": 4.1
+  },
+  {
+    "id": 6,
+    "nombre": "Sofía López",
+    "edad": 27,
+    "departamento": "Desarrollo",
+    "salario": 51000,
+    "ciudad": "Bilbao",
+    "fecha_contratacion": "2023-01-20",
+    "evaluacion_desempeno": 4.7
+  },
+  {
+    "id": 7,
+    "nombre": "Miguel Torres",
+    "edad": 31,
+    "departamento": "Marketing",
+    "salario": 46000,
+    "ciudad": "Madrid",
+    "fecha_contratacion": "2022-07-18",
+    "evaluacion_desempeno": 4.3
+  },
+  {
+    "id": 8,
+    "nombre": "Lucía Hernández",
+    "edad": 26,
+    "departamento": "Diseño",
+    "salario": 44000,
+    "ciudad": "Barcelona",
+    "fecha_contratacion": "2023-05-08",
+    "evaluacion_desempeno": 4.9
+  },
+  {
+    "id": 9,
+    "nombre": "Diego Martín",
+    "edad": 33,
+    "departamento": "Ventas",
+    "salario": 58000,
+    "ciudad": "Valencia",
+    "fecha_contratacion": "2021-02-14",
+    "evaluacion_desempeno": 4.4
+  },
+  {
+    "id": 10,
+    "nombre": "Elena Díaz",
+    "edad": 30,
+    "departamento": "Recursos Humanos",
+    "salario": 47000,
+    "ciudad": "Sevilla",
+    "fecha_contratacion": "2022-04-25",
+    "evaluacion_desempeno": 4.6
+  },
+  {
+    "id": 11,
+    "nombre": "Roberto Jiménez",
+    "edad": 24,
+    "departamento": "Desarrollo",
+    "salario": 43000,
+    "ciudad": "Madrid",
+    "fecha_contratacion": "2023-08-12",
+    "evaluacion_desempeno": 4.2
+  },
+  {
+    "id": 12,
+    "nombre": "Carmen Ruiz",
+    "edad": 34,
+    "departamento": "Marketing",
+    "salario": 54000,
+    "ciudad": "Bilbao",
+    "fecha_contratacion": "2021-10-30",
+    "evaluacion_desempeno": 4.8
+  }
+]

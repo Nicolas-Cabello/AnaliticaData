@@ -1,15 +1,17 @@
 # AnaliticaData
 
-Una aplicación web full-stack para análisis de datos CSV con capacidades de chat asistido por IA. AnaliticaData permite a los usuarios cargar archivos CSV, visualizar datos, generar gráficos dinámicos y obtener insights mediante conversaciones con IA.
+Una aplicación web full-stack para análisis de datos con capacidades de chat asistido por IA. AnaliticaData permite a los usuarios cargar archivos CSV, JSON y XLSX, visualizar datos, generar gráficos dinámicos y obtener insights mediante conversaciones con IA.
 
 ## 🌟 Características
 
 ### 📊 Análisis de Datos
-- **Carga de archivos CSV** con interfaz drag-and-drop
+- **Carga de archivos múltiples formatos** (CSV, JSON, XLSX/XLS) con interfaz drag-and-drop
 - **Vista previa de datos** en formato tabular
 - **Visualizaciones dinámicas** (gráficos de barras, líneas y tartas)
 - **Análisis estadístico** automático
 - **Resúmenes ejecutivos** generados por IA
+- **Soporte para archivos JSON** (arrays de objetos y objetos individuales)
+- **Soporte para hojas de cálculo Excel** (formatos .xlsx y .xls)
 
 ### 🤖 Chat con IA
 - **Conversaciones naturales** sobre tus datos
@@ -50,6 +52,8 @@ Una aplicación web full-stack para análisis de datos CSV con capacidades de ch
 ### IA y APIs
 - **Google Gemini API** para análisis de datos
 - **Papa Parse** para procesamiento CSV
+- **XLSX** para procesamiento de archivos Excel
+- **JSON parsing nativo** para archivos JSON
 
 ## 📋 Requisitos Previos
 
@@ -119,10 +123,16 @@ Una aplicación web full-stack para análisis de datos CSV con capacidades de ch
 - Crea una cuenta con username, email y contraseña
 - Inicia sesión para acceder al dashboard
 
-### 2. Carga de Datos CSV
-- Haz clic en el área de carga o arrastra tu archivo CSV
-- La aplicación mostrará una vista previa de los primeros 5 registros
+### 2. Carga de Datos
+- Haz clic en el área de carga o arrastra tu archivo (CSV, JSON o XLSX)
+- La aplicación detectará automáticamente el formato y procesará los datos
+- Se mostrará una vista previa de los datos con iconos distintivos por formato
 - Los datos quedarán asociados a tu usuario
+
+**Formatos soportados:**
+- **CSV**: Archivos de valores separados por comas
+- **JSON**: Arrays de objetos o objetos individuales
+- **XLSX/XLS**: Hojas de cálculo de Excel (primera hoja)
 
 ### 3. Análisis y Visualización
 - La aplicación genera automáticamente visualizaciones
