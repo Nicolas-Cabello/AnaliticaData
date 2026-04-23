@@ -157,11 +157,17 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
             </CardHeader>
             <CardContent className="pt-0">
               <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="login" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                <TabsList className="flex flex-col space-y-2 mb-6 h-auto p-0 bg-transparent">
+                  <TabsTrigger 
+                    value="login" 
+                    className="data-[state=active]:bg-blue-600 data-[state=active]:text-white justify-start h-12 px-4 text-left font-medium w-full border border-gray-200 rounded-lg"
+                  >
                     Iniciar Sesión
                   </TabsTrigger>
-                  <TabsTrigger value="register" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+                  <TabsTrigger 
+                    value="register" 
+                    className="data-[state=active]:bg-blue-600 data-[state=active]:text-white justify-start h-12 px-4 text-left font-medium w-full border border-gray-200 rounded-lg"
+                  >
                     Registrarse
                   </TabsTrigger>
                 </TabsList>
