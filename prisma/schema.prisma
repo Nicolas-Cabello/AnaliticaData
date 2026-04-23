@@ -5,8 +5,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Configuración adaptable para desarrollo (SQLite) y producción (PostgreSQL)
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"  // Para desarrollo local
+  // provider = "postgresql"  // Descomentar para producción en Vercel
   url      = env("DATABASE_URL")
 }
 
@@ -27,8 +29,8 @@ model DataFile {
   id          String   @id @default(cuid())
   fileName    String
   fileType    String   // 'csv', 'json', 'xlsx'
-  columns     String   // JSON string of column names
-  data        String   // JSON string of data
+  columns     String   // JSON string de column names (SQLite compatible)
+  data        String   // JSON string de datos (SQLite compatible)
   totalRows   Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

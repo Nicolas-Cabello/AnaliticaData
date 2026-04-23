@@ -193,7 +193,7 @@ AnaliticaData/
 
 ## 🗄️ Base de Datos
 
-La aplicación usa **SQLite** con **Prisma ORM**. El esquema incluye:
+La aplicación usa **SQLite** para desarrollo local y **PostgreSQL** para producción en Vercel con **Prisma ORM**. El esquema incluye:
 
 ### Modelo User
 - `id`: Identificador único
@@ -206,11 +206,17 @@ La aplicación usa **SQLite** con **Prisma ORM**. El esquema incluye:
 - `id`: Identificador único
 - `fileName`: Nombre del archivo
 - `fileType`: Tipo de archivo (csv, json, xlsx)
-- `columns`: Columnas (JSON)
-- `data`: Datos (JSON)
+- `columns`: Columnas (String JSON para compatibilidad SQLite)
+- `data`: Datos (String JSON para compatibilidad SQLite)
 - `totalRows`: Número total de filas
 - `userId`: Relación con usuario
 - `createdAt/updatedAt`: Timestamps
+
+### Configuración Dual
+- **Desarrollo**: SQLite (`provider = "sqlite"`)
+- **Producción**: PostgreSQL (`provider = "postgresql"`)
+
+Ver `DEPLOYMENT.md` para instrucciones completas de despliegue.
 
 ## 🔒 Seguridad
 

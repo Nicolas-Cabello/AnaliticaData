@@ -8,22 +8,15 @@ import {
   Line,
   PieChart,
   Pie,
-  ScatterChart,
-  Scatter,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Cell,
-  ReferenceLine,
-  ComposedChart,
-  Area,
-  AreaChart,
-  Rectangle
+  Cell
 } from 'recharts'
-import { BarChart3, LineChart as LineChartIcon, PieChart as PieChartIcon, ScatterChart as ScatterChartIcon, TrendingUp, Users, DollarSign, Calendar, Activity, Grid3X3 } from 'lucide-react'
+import { BarChart3, LineChart as LineChartIcon, PieChart as PieChartIcon, TrendingUp, Activity, Grid3X3 } from 'lucide-react'
 import ChartCustomization from './ChartCustomization'
 
 interface DataPoint {
@@ -49,47 +42,49 @@ interface AutoChartsProps {
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316']
 
 // Funciones auxiliares movidas fuera del componente para evitar recreación y mejorar legibilidad
-const calculateCorrelation = (data: any[], col1: string, col2: string) => {
-  try {
-    const values1 = data.map(row => Number(row[col1])).filter(val => !isNaN(val) && isFinite(val))
-    const values2 = data.map(row => Number(row[col2])).filter(val => !isNaN(val) && isFinite(val))
-    
-    if (values1.length !== values2.length || values1.length === 0) return 0
-    
-    const mean1 = values1.reduce((a, b) => a + b, 0) / values1.length
-    const mean2 = values2.reduce((a, b) => a + b, 0) / values2.length
-    
-    let numerator = 0
-    let sumSq1 = 0
-    let sumSq2 = 0
-    
-    for (let i = 0; i < values1.length; i++) {
-      const diff1 = values1[i] - mean1
-      const diff2 = values2[i] - mean2
-      numerator += diff1 * diff2
-      sumSq1 += diff1 * diff1
-      sumSq2 += diff2 * diff2
-    }
-    
-    const denominator = Math.sqrt(sumSq1 * sumSq2)
-    return denominator === 0 ? 0 : numerator / denominator
-  } catch (error) {
-    console.error('Error calculando correlación:', error)
-    return 0
-  }
-}
-
 const calculateCorrelationMatrix = (data: any[], numericColumns: string[]) => {
   const matrix: number[][] = []
   
+  // Pre-calcular valores numéricos una sola vez para todas las columnas
+  const columnValues: { [key: string]: { values: number[], mean: number } } = {}
+  numericColumns.forEach(col => {
+    const values = data.map(row => Number(row[col])).filter(val => !isNaN(val) && isFinite(val))
+    const mean = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0
+    columnValues[col] = { values, mean }
+  })
+
   numericColumns.forEach((col1, i) => {
     matrix[i] = []
+    const { values: v1, mean: m1 } = columnValues[col1]
+    
     numericColumns.forEach((col2, j) => {
       if (i === j) {
         matrix[i][j] = 1
+      } else if (j < i) {
+        // La matriz es simétrica, copiar valor ya calculado
+        matrix[i][j] = matrix[j][i]
       } else {
-        const correlation = calculateCorrelation(data, col1, col2)
-        matrix[i][j] = correlation
+        const { values: v2, mean: m2 } = columnValues[col2]
+        
+        if (v1.length !== v2.length || v1.length === 0) {
+          matrix[i][j] = 0
+          return
+        }
+        
+        let numerator = 0
+        let sumSq1 = 0
+        let sumSq2 = 0
+        
+        for (let k = 0; k < v1.length; k++) {
+          const diff1 = v1[k] - m1
+          const diff2 = v2[k] - m2
+          numerator += diff1 * diff2
+          sumSq1 += diff1 * diff1
+          sumSq2 += diff2 * diff2
+        }
+        
+        const denominator = Math.sqrt(sumSq1 * sumSq2)
+        matrix[i][j] = denominator === 0 ? 0 : numerator / denominator
       }
     })
   })
@@ -118,7 +113,6 @@ const createHeatmapData = (data: any[], numericColumns: string[]) => {
     
     return heatmapData
   } catch (error) {
-    console.error('Error creando datos para heatmap:', error)
     return []
   }
 }
@@ -446,19 +440,10 @@ export default function AutoCharts({ data, fileName }: AutoChartsProps) {
       })
     }
 
-    console.log('Columnas detectadas:', { numericColumns, categoricalColumns, dateColumns })
-    console.log('Datos de muestra:', data.slice(0, 2))
-    
-    // Verificar valores numéricos por columna
-    numericColumns.forEach(col => {
-      const values = data.map(row => row[col])
-      const numericValues = values.filter(val => !isNaN(Number(val)) && isFinite(Number(val)))
-      console.log(`Columna ${col}:`, { 
-        totalValues: values.length, 
-        numericValues: numericValues.length,
-        sampleValues: values.slice(0, 3)
-      })
-    })
+    // numericColumns.forEach(col => {
+    //   const values = data.map(row => row[col])
+    //   const numericValues = values.filter(val => !isNaN(Number(val)) && isFinite(Number(val)))
+    // })
 
     // Limitar el número de gráficos generados
     const maxChartsPerType = 3
@@ -742,7 +727,7 @@ export default function AutoCharts({ data, fileName }: AutoChartsProps) {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
@@ -757,30 +742,23 @@ export default function AutoCharts({ data, fileName }: AutoChartsProps) {
         )
 
       case 'scatter':
-        const trendLine = calculateTrendLine(data)
-        
+        // Convertir scatter chart a line chart para simplificar
         return (
           <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart data={data}>
+            <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="x" name={xKey} type="number" domain={['auto', 'auto']} />
               <YAxis dataKey="y" name={yKey} type="number" domain={['auto', 'auto']} />
               <Tooltip cursor={{ strokeDasharray: '3 3' }} />
               <Legend />
-              <Scatter name="Datos" data={data} fill={colors[0]} />
-              {trendLine && (
-                <Line 
-                  data={trendLine}
-                  type="monotone" 
-                  dataKey="y" 
-                  stroke={colors[1] || "#ef4444"} 
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  dot={false}
-                  name="Tendencia"
-                />
-              )}
-            </ComposedChart>
+              <Line 
+                name="Datos" 
+                dataKey="y" 
+                stroke={colors[0]} 
+                strokeWidth={2}
+                dot={{ fill: colors[0] }}
+              />
+            </LineChart>
           </ResponsiveContainer>
         )
 
@@ -811,8 +789,9 @@ export default function AutoCharts({ data, fileName }: AutoChartsProps) {
                       
                       {/* Celdas */}
                       {uniqueLabels.map((xLabel, x) => {
-                        const cellData = data.find(d => d.xLabel === xLabel && d.yLabel === yLabel)
-                        const correlation = cellData?.correlation || 0
+                        // Optimizar búsqueda: usar los datos directamente si es posible
+                        const cellData = data[y * uniqueLabels.length + x]
+                        const correlation = cellData?.correlation ?? 0
                         const intensity = Math.abs(correlation)
                         
                         return (
@@ -925,7 +904,7 @@ export default function AutoCharts({ data, fileName }: AutoChartsProps) {
       case 'bar': return <BarChart3 className="w-4 h-4" />
       case 'line': return <LineChartIcon className="w-4 h-4" />
       case 'pie': return <PieChartIcon className="w-4 h-4" />
-      case 'scatter': return <ScatterChartIcon className="w-4 h-4" />
+      case 'scatter': return <LineChartIcon className="w-4 h-4" />
       case 'heatmap': return <Grid3X3 className="w-4 h-4" />
       case 'histogram': return <Activity className="w-4 h-4" />
       case 'boxplot': return <BarChart3 className="w-4 h-4" />
@@ -938,7 +917,7 @@ export default function AutoCharts({ data, fileName }: AutoChartsProps) {
       todas: { name: 'Todas', icon: <BarChart3 className="w-4 h-4" />, color: 'bg-gray-100 text-gray-700' },
       distribucion: { name: 'Distribución', icon: <PieChartIcon className="w-4 h-4" />, color: 'bg-blue-100 text-blue-700' },
       tendencias: { name: 'Tendencias', icon: <LineChartIcon className="w-4 h-4" />, color: 'bg-green-100 text-green-700' },
-      correlaciones: { name: 'Correlaciones', icon: <ScatterChartIcon className="w-4 h-4" />, color: 'bg-purple-100 text-purple-700' },
+      correlaciones: { name: 'Correlaciones', icon: <LineChartIcon className="w-4 h-4" />, color: 'bg-purple-100 text-purple-700' },
       comparacion: { name: 'Comparación', icon: <BarChart3 className="w-4 h-4" />, color: 'bg-orange-100 text-orange-700' },
       estadistico: { name: 'Estadístico', icon: <Activity className="w-4 h-4" />, color: 'bg-red-100 text-red-700' }
     }
