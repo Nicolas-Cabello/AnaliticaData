@@ -2,6 +2,14 @@
 
 Una aplicación web full-stack para análisis de datos con capacidades de chat asistido por IA. AnaliticaData permite a los usuarios cargar archivos CSV, JSON y XLSX, visualizar datos, generar gráficos dinámicos y obtener insights mediante conversaciones con IA.
 
+## 🎯 Versión Actual
+
+**v1.0.0** - Versión completa con todas las funcionalidades implementadas
+
+✅ **Estado**: Listo para producción  
+🚀 **Despliegue**: Disponible en GitHub  
+🌐 **Demo**: Ejecuta localmente con `npm run dev`
+
 ## 🌟 Características
 
 ### 📊 Análisis de Datos
@@ -65,8 +73,8 @@ Una aplicación web full-stack para análisis de datos con capacidades de chat a
 
 1. **Clonar el repositorio**
    ```bash
-   git clone <URL_DEL_REPOSITORIO>
-   cd insightflow
+   git clone https://github.com/Nicolas-Cabello/AnaliticaData.git
+   cd AnaliticaData
    ```
 
 2. **Instalar dependencias**
@@ -147,7 +155,7 @@ Una aplicación web full-stack para análisis de datos con capacidades de chat a
 ## 🏗️ Estructura del Proyecto
 
 ```
-insightflow/
+AnaliticaData/
 ├── src/
 │   ├── app/                 # Rutas de Next.js App Router
 │   │   ├── api/            # API Routes
@@ -156,25 +164,31 @@ insightflow/
 │   │   └── page.tsx        # Página principal
 │   ├── components/         # Componentes React
 │   │   ├── AuthForm.tsx    # Formulario de auth
-│   │   ├── CSVUploader.tsx # Carga de CSV
+│   │   ├── FileUploader.tsx # Carga de archivos múltiples formatos
 │   │   ├── DataPreview.tsx # Vista previa de datos
-│   │   └── ChartVisualization.tsx # Gráficos
+│   │   ├── ChartVisualization.tsx # Gráficos
+│   │   ├── AutoCharts.tsx  # Gráficos automáticos
+│   │   └── ChartCustomization.tsx # Personalización de gráficos
 │   ├── contexts/           # Contextos de React
 │   │   └── AuthContext.tsx # Contexto de autenticación
 │   ├── hooks/              # Hooks personalizados
-│   │   └── useCSVParser.ts # Hook para parsear CSV
+│   │   ├── useCSVParser.ts # Hook para parsear CSV
+│   │   ├── useDataFileParser.ts # Hook para múltiples formatos
+│   │   └── useChatAI.ts    # Hook para chat con IA
 │   ├── lib/                # Utilidades
 │   │   ├── prisma.ts       # Cliente de Prisma
-│   │   └── auth.ts         # Funciones de auth
+│   │   ├── auth.ts         # Funciones de auth
+│   │   └── utils.ts        # Utilidades varias
 │   └── services/           # Servicios
-│       └── chatAI.ts       # Servicio de IA
+│       └── gemini.ts       # Servicio de IA Gemini
 ├── prisma/
-│   ├── schema.prisma       # Schema de base de datos
-│   └── prisma.config.ts    # Configuración de Prisma
+│   └── schema.prisma       # Schema de base de datos
 ├── public/                 # Archivos estáticos
-├── .env                    # Variables de entorno
-├── .env.local             # Variables locales
-└── README.md              # Este archivo
+├── datos_empleados.csv     # Datos de ejemplo
+├── datos_empleados.json    # Datos JSON de ejemplo
+├── datos_empleados.xlsx    # Datos Excel de ejemplo
+├── .env.example            # Variables de entorno ejemplo
+└── README.md               # Este archivo
 ```
 
 ## 🗄️ Base de Datos
@@ -188,9 +202,10 @@ La aplicación usa **SQLite** con **Prisma ORM**. El esquema incluye:
 - `password`: Contraseña hasheada
 - `createdAt/updatedAt`: Timestamps
 
-### Modelo CSVData
+### Modelo DataFile
 - `id`: Identificador único
 - `fileName`: Nombre del archivo
+- `fileType`: Tipo de archivo (csv, json, xlsx)
 - `columns`: Columnas (JSON)
 - `data`: Datos (JSON)
 - `totalRows`: Número total de filas
