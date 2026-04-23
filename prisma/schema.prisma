@@ -5,10 +5,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Configuración adaptable para desarrollo (SQLite) y producción (PostgreSQL)
+// Configuración universal para PostgreSQL (desarrollo y producción)
 datasource db {
-  provider = "postgresql"  // Para producción en Vercel
-  // provider = "sqlite"  // Descomentar para desarrollo local
+  provider = "postgresql"  // PostgreSQL para todos los entornos
   url      = env("DATABASE_URL")
 }
 
