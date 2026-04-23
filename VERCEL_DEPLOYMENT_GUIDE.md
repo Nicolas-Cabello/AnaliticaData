@@ -41,12 +41,9 @@ postgres://4d8f7dc7576c9a301ba32aaa1ccb8cee1f1ab8e0840faee1abd92ec1ac1e5573:sk_R
 
 PRISMA_DATABASE_URL
 postgres://4d8f7dc7576c9a301ba32aaa1ccb8cee1f1ab8e0840faee1abd92ec1ac1e5573:sk_Ra24u9K8B1RpUQJbyJH1Q@db.prisma.io:5432/postgres?sslmode=require
-
-PRISMA_GENERATE_DATAPROXY
-true
 ```
 
-**IMPORTANTE**: Marca todas las variables como **"Secret"** excepto `NODE_ENV` y `PRISMA_GENERATE_DATAPROXY`
+**IMPORTANTE**: Marca todas las variables como **"Secret"** excepto `NODE_ENV`
 
 ### **PASO 4: CONFIGURACIÓN DE BUILD**
 Vercel usará automáticamente la configuración de `vercel.json`:

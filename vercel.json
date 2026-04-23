@@ -3,12 +3,9 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "env": {
-    "PRISMA_GENERATE_DATAPROXY": "true"
-  },
   "functions": {
     "src/app/api/**/*.ts": {
       "maxDuration": 30
     }
   }
-}
+}
