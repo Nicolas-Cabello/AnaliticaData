@@ -27,17 +27,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Convertir arrays/objetos a strings JSON para SQLite
-    const columnsString = JSON.stringify(columns)
-    const dataString = JSON.stringify(data)
-
-    // Guardar en base de datos
+    // Guardar en base de datos (PostgreSQL soporta JSON directamente)
     const dataFile = await prisma.dataFile.create({
       data: {
         fileName,
         fileType,
-        columns: columnsString,
-        data: dataString,
+        columns, // JSON directamente para PostgreSQL
+        data,    // JSON directamente para PostgreSQL
         totalRows,
         userId: decoded.userId
       }
@@ -107,15 +103,9 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // Convertir strings JSON de vuelta a arrays/objetos
-    const filesWithParsedData = dataFiles.map(file => ({
-      ...file,
-      columns: JSON.parse(file.columns),
-      data: JSON.parse(file.data)
-    }))
-
+    // PostgreSQL devuelve JSON directamente, no necesita conversión
     return NextResponse.json(
-      { files: filesWithParsedData },
+      { files: dataFiles },
       { status: 200 }
     )
 

@@ -7,8 +7,8 @@ generator client {
 
 // Configuración adaptable para desarrollo (SQLite) y producción (PostgreSQL)
 datasource db {
-  provider = "sqlite"  // Para desarrollo local
-  // provider = "postgresql"  // Descomentar para producción en Vercel
+  provider = "postgresql"  // Para producción en Vercel
+  // provider = "sqlite"  // Descomentar para desarrollo local
   url      = env("DATABASE_URL")
 }
 
@@ -29,8 +29,8 @@ model DataFile {
   id          String   @id @default(cuid())
   fileName    String
   fileType    String   // 'csv', 'json', 'xlsx'
-  columns     String   // JSON string de column names (SQLite compatible)
-  data        String   // JSON string de datos (SQLite compatible)
+  columns     Json     // JSON de column names (PostgreSQL compatible)
+  data        Json     // JSON de datos (PostgreSQL compatible)
   totalRows   Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
