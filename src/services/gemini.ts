@@ -22,27 +22,35 @@ export class GeminiService {
   private model: any
 
   constructor() {
-    // Usamos un modelo más estable como principal
-    this.model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+    // Usamos el modelo 2.5 flash que está disponible y es potente
+    this.model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
   }
 
   // Método de respaldo si el principal falla
   private async tryWithFallbackModel(prompt: string): Promise<any> {
-    const models = ['gemini-2.0-flash', 'gemini-pro-latest', 'gemini-flash-latest']
+    // Lista de modelos disponibles para respaldo
+    const models = [
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-flash-latest',
+      'gemini-2.5-flash-lite'
+    ]
     
     for (const modelName of models) {
       try {
-        console.log(`Intentando con modelo: ${modelName}`)
+        console.log(`Intentando conectar con modelo de nueva generación: ${modelName}...`)
         const fallbackModel = genAI.getGenerativeModel({ model: modelName })
         const result = await fallbackModel.generateContent(prompt)
         const response = await result.response
-        return response.text()
-      } catch (error) {
-        console.log(`Error con ${modelName}:`, error)
+        const text = response.text()
+        console.log(`✅ Conexión exitosa con: ${modelName}`)
+        return text
+      } catch (error: any) {
+        console.warn(`⚠️ Modelo ${modelName} no disponible o error de cuota:`, error?.message || 'Error desconocido')
         continue
       }
     }
-    throw new Error('Todos los modelos fallaron. Por favor, inténtalo más tarde.')
+    throw new Error('No se pudo conectar con los modelos Gemini 3.0/2.5. Por favor, verifica que tu API Key tenga habilitados estos modelos en Google AI Studio.')
   }
 
   async analyzeData(userQuery: string, dataSample: DataSample): Promise<ChatResponse> {
